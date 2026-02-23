@@ -1,0 +1,1749 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="images">
+    <title>SkoolAI</title>
+    <!-- EmailJS for email functionality -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script type="text/javascript">
+        (function() {
+            // IMPORTANT: To enable email functionality, follow these steps:
+            // 1. Go to https://www.emailjs.com and sign up for a free account
+            // 2. Create a new email service (Gmail, Outlook, etc.)
+            // 3. Create a new template for waitlist signups
+            // 4. Replace 'YOUR_PUBLIC_KEY' with your actual public key from EmailJS
+            // 5. Replace 'YOUR_SERVICE_ID' and 'YOUR_TEMPLATE_ID' below
+            emailjs.init("4IWjsAVb_ORJ0ZqAx"); // EmailJS Public Key (inserted)
+        })();
+    </script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Load local SF Pro Rounded fonts placed in the same folder as this HTML file */
+        @font-face {
+            font-family: 'SF Pro Rounded';
+            src: url('SF-Pro-Rounded-Regular.otf') format('opentype');
+            font-weight: 400;
+            font-style: normal;
+            font-display: swap;
+        }
+        @font-face {
+            font-family: 'SF Pro Rounded';
+            src: url('SF-Pro-Rounded-Bold.otf') format('opentype');
+            font-weight: 700;
+            font-style: normal;
+            font-display: swap;
+        }
+
+        /* Site-wide base */
+        :root { 
+            --brand-gap: 0.25rem;
+            --primary-blue: #1f6feb;
+            --text-dark: #111;
+            --text-light: #666;
+            --bg-light-blue: #eef5fb;
+            --success-green: #10b981;
+            --error-red: #ef4444;
+        }
+        
+        html, body {
+            width: 100%;
+            height: auto;
+            min-height: 100%;
+            overflow-x: hidden;
+        }
+
+        body {
+            font-family: 'SF Pro Rounded', system-ui, -apple-system, 'Segoe UI', Roboto, "Helvetica Neue", Arial, sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            background: #ffffff;
+            color: var(--text-dark);
+            line-height: 1.6;
+            overflow-x: hidden;
+            width: 100%;
+        }
+
+        /* Header */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: #ffffff;
+            padding: 16px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        /* Brand container: small logo left of the title */
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: var(--brand-gap);
+        }
+
+        .brand .logo {
+            width: 28px;
+            height: auto;
+            display: block;
+        }
+
+        h4 {
+            font-family: inherit;
+            color: var(--primary-blue);
+            margin: 0;
+            font-weight: 700;
+            font-size: 1rem;
+            line-height: 1;
+        }
+
+        /* Top-right fixed button */
+        .top-btn {
+            background: var(--primary-blue);
+            color: #ffffff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-family: 'SF Pro Rounded', system-ui, -apple-system, 'Segoe UI', Roboto, "Helvetica Neue", Arial, sans-serif;
+            font-weight: 700;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+        }
+        .top-btn:focus { 
+            outline: 3px solid rgba(31,111,235,0.15); 
+            outline-offset: 2px; 
+        }
+        .top-btn:hover { 
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+        
+        /* Hamburger Menu */
+        .hamburger {
+            display: none;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+            font-size: 28px;
+            color: black;
+            font-weight: bold;
+            line-height: 1;
+        }
+
+        .hamburger:hover {
+            opacity: 0.7;
+        }
+
+        @media (max-width: 768px) {
+            .hamburger {
+                display: block;
+            }
+        }
+
+        /* Sidebar Menu */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 100%;
+            height: 100vh;
+            background: #ffffff;
+            z-index: 998;
+            transition: transform 0.3s ease;
+            transform: translateX(100%);
+            padding: 80px 24px 24px;
+            overflow-y: auto;
+        }
+
+        .sidebar.active {
+            transform: translateX(0);
+        }
+
+        /* Overlay behind sidebar */
+        .sidebar::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: white;
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .sidebar.active::before {
+            opacity: 1;
+        }
+
+        .sidebar-close {
+            position: absolute;
+            top: 20px;
+            right: 24px;
+            background: none;
+            border: none;
+            font-size: 28px;
+            cursor: pointer;
+            color: var(--primary-blue);
+        }
+
+        .sidebar-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .sidebar-menu li a {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            text-decoration: none;
+            display: block;
+            padding: 12px 0;
+            transition: color 0.2s;
+        }
+
+        .sidebar-menu li a:hover {
+            color: var(--primary-blue);
+        }
+        
+        /* Loading state for buttons */
+        .top-btn.loading {
+            position: relative;
+            color: transparent;
+        }
+        
+        .top-btn.loading::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        /* Hero Section */
+        .hero {
+            
+            max-width: 1200px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        .hero2 {
+          font-size: small; 
+            max-width: 1200px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 24px;
+            color: var(--text-dark);
+        }
+         .hero2 h2 {
+            font-size: 24px;
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 24px;
+            color: var(--text-dark);
+        }
+
+        .hero2 h6 {
+           
+           
+            line-height: 1.2;
+            margin-bottom: 24px;
+           
+        }
+
+        .hero h1 .highlight {
+            color: var(--primary-blue);
+        }
+
+        .hero p {
+            font-size: clamp(1rem, 2vw, 1.25rem);
+            color: var(--text-light);
+            max-width: 700px;
+            margin: 0 auto 40px;
+            line-height: 1.6;
+        }
+
+        /* Headings */
+        h2 {
+            font-family: 'SF Pro Rounded', system-ui, -apple-system, 'Segoe UI', Roboto, "Helvetica Neue", Arial, sans-serif;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin: 0.5rem 0;
+            text-align: center;
+            font-size: clamp(1.75rem, 5vw, 3rem);
+            line-height: 1.2;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+
+        h2.highlight {
+            color: var(--primary-blue);
+        }
+
+        h6 {
+            font-family: 'SF Pro Rounded', system-ui, -apple-system, 'Segoe UI', Roboto, "Helvetica Neue", Arial, sans-serif;
+            font-weight: 400;
+            font-size: clamp(1rem, 2vw, 1.25rem);
+            color: var(--text-light);
+            margin: 24px auto 0;
+            max-width: 700px;
+            line-height: 1.6;
+            text-align: center;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+
+        /* Hero CTA - Fixed Input + Button */
+        .hero-cta {
+            position: relative;
+            max-width: 500px;
+            margin: 50px auto 20px;
+        }
+
+        /* Container for input and button */
+        .input-button-container {
+            position: relative;
+            width: 100%;
+        }
+        
+
+        .email-input-combined {
+            padding: 14px 120px 14px 18px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-family: 'SF Pro Rounded', system-ui, -apple-system, 'Segoe UI', Roboto, "Helvetica Neue", Arial, sans-serif;
+            font-size: 1rem;
+            width: 100%;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        .email-input-combined:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(31,111,235,0.1);
+        }
+        
+        .email-input-combined.error {
+            border-color: var(--error-red);
+            background-color: rgba(239,68,68,0.05);
+        }
+        
+        .email-input-combined.success {
+            border-color: var(--success-green);
+            background-color: rgba(16,185,129,0.05);
+        }
+
+      
+
+        .cta-button-combined:hover {
+            transform: translateY(-50%) scale(1.05);
+            box-shadow: 0 4px 12px rgba(31,111,235,0.3);
+        }
+        
+        .cta-button-combined.loading {
+            position: relative;
+            color: transparent;
+            width: 130px;
+        }
+        
+        .cta-button-combined.loading::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        /* Status Messages */
+        .status-message {
+            text-align: center;
+            margin-top: 15px;
+            padding: 12px 20px;
+            border-radius: 10px;
+            font-weight: 600;
+            animation: slideDown 0.3s ease;
+            display: none;
+        }
+        
+        .status-message.success {
+            background-color: rgba(16,185,129,0.1);
+            color: var(--success-green);
+            border: 1px solid rgba(16,185,129,0.3);
+            display: block;
+        }
+        
+        .status-message.error {
+            background-color: rgba(239,68,68,0.1);
+            color: var(--error-red);
+            border: 1px solid rgba(239,68,68,0.3);
+            display: block;
+        }
+        
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes spin {
+            0% { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        /* Waitlist Section - Fixed Input + Button */
+        .waitlist-section {
+            max-width: 1200px;
+            margin: 80px auto;
+            padding: 60px 24px;
+            text-align: center;
+        }
+
+        .waitlist-section h2 {
+            margin-bottom: 20px;
+            color: var(--text-dark);
+            font-size: 32px;
+        }
+
+        .waitlist-cta {
+            position: relative;
+            max-width: 550px;
+            margin: 40px auto 0;
+            background: #2a2a2a;
+            padding: 40px;
+            border-radius: 20px;
+        }
+
+        .waitlist-cta h3 {
+            color: white;
+            font-size: 20px;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .waitlist-input {
+            padding: 14px 120px 14px 18px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-family: 'SF Pro Rounded', system-ui, -apple-system, 'Segoe UI', Roboto, "Helvetica Neue", Arial, sans-serif;
+            font-size: 1rem;
+            width: 100%;
+            transition: border-color 0.2s;
+            box-sizing: border-box;
+        }
+
+        .waitlist-input:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+        }
+        
+        .waitlist-input.error {
+            border-color: var(--error-red);
+            background-color: rgba(239,68,68,0.05);
+        }
+        
+        .waitlist-input.success {
+            border-color: var(--success-green);
+            background-color: rgba(16,185,129,0.05);
+        }
+
+        .waitlist-button {
+            position: absolute;
+            right: 6px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--primary-blue);
+            color: #ffffff;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 8px;
+            font-family: 'SF Pro Rounded', system-ui, -apple-system, 'Segoe UI', Roboto, "Helvetica Neue", Arial, sans-serif;
+            font-weight: 700;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            max-width: 130px;
+            box-sizing: border-box;
+        }
+
+        .waitlist-button:hover {
+            transform: translateY(-50%) scale(1.05);
+            box-shadow: 0 4px 12px rgba(31,111,235,0.3);
+        }
+        
+        .waitlist-button.loading {
+            position: relative;
+            color: transparent;
+            width: 130px;
+        }
+        
+        .waitlist-button.loading::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        /* Phone Mockup */
+        .phone-mockup {
+            max-width: 390px;
+            margin: 80px auto;
+            position: relative;
+            display: flex;
+            justify-content: center;
+        }
+
+        .phone-container {
+            background: transparent;
+            border-radius: 15px;
+            padding: 0;
+            overflow: hidden;
+            box-shadow: 0 0 0 1px rgba(82, 80, 80, 0.1);
+            width: 130%;
+            max-width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto;
+        }
+
+        .phone-mockup img {
+            width: 100%;
+            height: auto;
+            display: block;
+            border-radius: 0;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            object-fit: contain;
+        }
+
+        /* Responsive Design - Mobile */
+        @media (max-width: 768px) {
+            .hero-cta {
+                padding: 0 16px;
+                margin: 30px auto 10px;
+            }
+            
+            .email-input-combined {
+                padding-right: 110px;
+                font-size: 0.95rem;
+            }
+            
+           
+            
+            .waitlist-cta {
+                padding: 0 16px;
+            }
+            
+            .waitlist-input {
+                padding-right: 110px;
+                font-size: 0.95rem;
+            }
+            
+            .waitlist-button {
+                padding: 10px 16px;
+                font-size: 0.9rem;
+                max-width: 120px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero-cta {
+                padding: 0 16px;
+                margin: 20px auto 10px;
+            }
+            
+            .email-input-combined {
+                padding-right: 100px;
+                font-size: 0.9rem;
+            }
+            
+            
+            
+            .waitlist-cta {
+                padding: 0 16px;
+            }
+            
+            .waitlist-input {
+                padding-right: 100px;
+                font-size: 0.9rem;
+            }
+            
+            .waitlist-button {
+                padding: 9px 14px;
+                font-size: 0.85rem;
+                max-width: 110px;
+                right: 4px;
+            }
+        }
+
+        @media (max-width: 380px) {
+            .email-input-combined {
+                padding-right: 90px;
+                font-size: 0.85rem;
+            }
+            
+           
+            
+            .waitlist-input {
+                padding-right: 90px;
+                font-size: 0.85rem;
+            }
+            
+            .waitlist-button {
+                padding: 8px 12px;
+                font-size: 0.8rem;
+                max-width: 100px;
+                right: 3px;
+            }
+        }
+
+        /* Smart Document Analysis Section */
+        .document-analysis-section {
+            max-width: 1200px;
+            margin: 80px auto;
+            padding: 0 24px;
+        }
+
+        .analysis-container {
+            background: #ffffff;
+            border-radius: 24px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+        }
+
+        .analysis-main {
+            display: flex;
+            gap: 60px;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .analysis-text {
+            flex: 1;
+        }
+
+        .analysis-text h1 {
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 700;
+            margin: 0 0 20px 0;
+            color: var(--text-dark);
+            line-height: 1.2;
+        }
+
+        .analysis-text p {
+            font-size: clamp(1rem, 2vw, 1.25rem);
+            color: var(--text-light);
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        .upload-box {
+            flex: 1;
+            max-width: 400px;
+            background: #f9fbff;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .analysis-mobile-image {
+            display: none;
+            width: 100%;
+            text-align: center;
+        }
+
+        .image-scroll-container {
+            display: block !important;
+            width: 100%;
+            /* make the container larger so images appear bigger */
+            height: 65vh;                        /* increased size - change if needed */
+            min-height: 320px;
+            max-height: 800px;
+            overflow-y: auto;                    /* changed from hidden → allows scrolling */
+            scroll-snap-type: y mandatory;       /* snaps to each image */
+            -webkit-overflow-scrolling: touch;   /* smooth momentum scrolling on iOS */
+            position: relative;
+        }
+
+        /* Hide scrollbar for clean look (optional but recommended) */
+        .image-scroll-container::-webkit-scrollbar {
+            display: none;
+        }
+        .image-scroll-container {
+            -ms-overflow-style: none;          /* Edge + IE */
+            scrollbar-width: none;             /* Firefox */
+        }
+
+        .image-stack {
+            width: 100%;
+            /* ensure stack spans the scroll container so children can use 100% height */
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Each image will fill its page wrapper (which matches the container height) */
+        .image-stack img {
+            width: auto;
+            height: 100%;
+            object-fit: cover; /* fills the area and makes images appear larger; use 'contain' if you prefer whole image visible */
+            flex-shrink: 0;
+            padding: 6px 4px;
+            box-sizing: border-box;
+            scroll-snap-align: start;          /* ← key line: each image snaps to top */
+            display: block;
+            margin: 0 auto;
+        }
+
+        .analysis-mobile-image img {
+            width: 100%;
+            max-width: 500px;
+            height: auto;
+            border-radius: 20px;
+            object-fit: contain;
+        }
+
+        .upload-header {
+            text-align: center;
+            font-size: 1.1rem;
+            color: #555;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .upload-area {
+            background: #ffffff;
+            border: 2px dashed #e0e0e0;
+            border-radius: 16px;
+            padding: 40px 20px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .upload-icon {
+            font-size: 48px;
+            color: #888;
+            margin-bottom: 16px;
+        }
+
+        .upload-text {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 16px;
+        }
+
+        .select-btn {
+            background: var(--primary-blue);
+            color: white;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .select-btn:hover {
+            opacity: 0.9;
+        }
+
+        .file-info {
+            font-size: 14px;
+            color: #777;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .analyse-btn {
+            display: block;
+            width: 100%;
+            background: #eef1f5;
+            color: #555;
+            border: none;
+            padding: 14px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: not-allowed;
+        }
+
+        /* Feature Cards */
+        .hero-card {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 40px;
+            background: #eef5fb;
+            border-radius: 17px;
+            padding: 60px;
+            max-width: 1200px;
+            margin: 40px auto;
+        }
+
+        .hero-text {
+            flex: 1.1;
+            max-width: 50%;
+        }
+
+        .hero-text h1 {
+            font-size: clamp(1.75rem, 4vw, 2.5rem);
+            font-weight: 700;
+            margin: 0 0 20px 0;
+            color: var(--text-dark);
+            line-height: 1.2;
+        }
+
+        .hero-text p {
+            font-size: clamp(1rem, 2vw, 1.25rem);
+            color: var(--text-light);
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+
+        .hero-image {
+            flex: 0.9;
+            display: flex;
+            justify-content: center;
+        }
+
+        .hero-image img {
+            width: 420px;
+            max-width: 100%;
+            height: auto;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 968px) {
+            .analysis-main {
+                flex-direction: column;
+                text-align: center;
+                gap: 40px;
+            }
+            
+            .upload-box {
+                max-width: 100%;
+            }
+            
+            .hero-card {
+                grid-template-columns: 1fr;
+                gap: 40px;
+                padding: 50px 32px;
+            }
+            
+            .feature-visual {
+                order: -1;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .hero-card {
+                flex-direction: column;
+                text-align: center;
+                padding: 40px 24px;
+            }
+
+            .hero-text {
+                max-width: 100%;
+            }
+
+            .hero-image img {
+                width: 300px;
+            }
+            
+            .analysis-container {
+                padding: 30px;
+            }
+            
+            .analysis-main {
+                gap: 30px;
+            }
+            
+            .waitlist-section {
+                padding: 40px 24px;
+            }
+            
+            /* Mobile-specific styles - show only image */
+            .analysis-text.mobile-hidden {
+                display: none;
+            }
+            
+            .upload-box.mobile-hidden {
+                display: none;
+            }
+            
+            .analysis-mobile-image.mobile-visible {
+                display: block;
+                width: 100%;
+                max-width: 100%;
+            }
+            
+            .analysis-mobile-image.mobile-visible img {
+                width: 100%;
+                max-width: 100%;
+                height: auto;
+            }
+            
+            .analyze-mobile-image.mobile-visible {
+                display: block;
+                width: 100%;
+            }
+            
+            /* Adjust container for mobile when only showing image */
+            .analysis-container.mobile-layout {
+                padding: 0;
+                background: transparent;
+                box-shadow: none;
+            }
+            
+        }
+        
+        /* Cloud Styles */
+        .cloud {
+            position: absolute;
+            opacity: 0.5;
+            background: url('cloud.png') no-repeat center/contain;
+            animation-timing-function: linear;
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        .cloud-1 {
+            top: 10%;
+            width: 200px;
+            animation-duration: 60s;
+        }
+        
+        .cloud-2 {
+            top: 30%;
+            width: 260px;
+            animation-duration: 90s;
+        }
+        
+        .cloud-3 {
+            top: 55%;
+            width: 180px;
+            animation-duration: 75s;
+        }
+        
+        /* Animation */
+        @keyframes moveClouds {
+            from {
+                transform: translateX(-300px);
+            }
+            to {
+                transform: translateX(110vw);
+            }
+        }
+        
+        .cloud {
+            animation:
+                moveClouds linear infinite,
+                floatCloud 6s ease-in-out infinite;
+        }
+        
+        @keyframes floatCloud {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(15px); }
+            100% { transform: translateY(0); }
+        }
+        .hero,
+        header {
+            position: relative;
+            z-index: 2;
+        }
+        
+        
+        #cloudCanvas {
+            position: fixed;
+            top: -50px;
+            left: 0;
+            width: 100%;
+            height: 120px;
+            z-index: 0;
+            pointer-events: none;
+            opacity: 0.5;
+        }
+        
+        /* Global loader overlay (visible by default to block initial content) */
+        #global-loader {
+            position: fixed;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255,255,255,0.95);
+            z-index: 99990;
+            transition: opacity 300ms ease, visibility 300ms ease;
+            visibility: visible;
+            opacity: 1;
+            pointer-events: auto;
+        }
+        
+        #global-loader.hidden {
+            visibility: hidden;
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        .global-spinner {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            border: 6px solid rgba(31,111,235,0.12);
+            border-top-color: var(--primary-blue);
+            animation: loaderSpin 800ms linear infinite;
+            box-shadow: 0 6px 20px rgba(31,111,235,0.12);
+            pointer-events: none;
+        }
+        
+        @keyframes loaderSpin {
+            to { transform: rotate(360deg); }
+        }
+
+       /* ────────────────────────────────────────────────
+   PDF-style fixed viewport + snap scrolling (mobile)
+───────────────────────────────────────────────── */
+.image-scroll-container {
+    /* Must be visible on mobile */
+    display: block !important;
+
+    width: 100%;
+    /* Shorter fixed height to reduce whitespace */
+    height: 50vh;                 /* shorter mobile stack */
+    min-height: 280px;            /* prevent becoming too small on tiny phones */
+    max-height: 560px;            /* cap size on larger phones */
+
+    overflow-y: scroll;           /* important: scroll, not hidden */
+    scroll-snap-type: y mandatory;
+    -webkit-overflow-scrolling: touch;   /* smooth iOS momentum */
+
+    background: #f8f9fc;
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.12);
+    position: relative;
+    overscroll-behavior-y: contain;   /* prevents pull-to-refresh conflict */
+}
+
+/* Hide scrollbar – clean look */
+.image-scroll-container::-webkit-scrollbar {
+    display: none;
+}
+.image-scroll-container {
+    scrollbar-width: none;        /* Firefox */
+    -ms-overflow-style: none;     /* Edge/IE */
+}
+
+.image-stack {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+    .page-wrapper {
+    /* Each "page" takes full viewport height */
+    height: 100%;                 /* ← key: forces snap height */
+    width: 100%;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;     /* stronger snap behavior in some browsers */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: white;
+    padding: 4px 4px 8px;      /* tightened further to reduce whitespace */
+    box-sizing: border-box;
+    position: relative;
+    border-bottom: 1px solid #e5ebfb;   /* subtle page separator */
+}
+
+.page-wrapper img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;          /* preserves aspect ratio – no stretching */
+    border-radius: 4px;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.08);
+}
+
+/* Floating page indicator (optional but nice) */
+.stack-page-counter {
+    position: absolute;
+    bottom: 16px;
+    right: 16px;
+    background: rgba(0,0,0,0.65);
+    color: white;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 6px 12px;
+    border-radius: 20px;
+    backdrop-filter: blur(6px);
+    pointer-events: none;
+    z-index: 5;
+}
+
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <canvas id="cloudCanvas"></canvas>
+        <div class="brand">
+            <img src="Skool Union.png" alt="Skool Union logo" class="logo">
+            <h4>SkoolAI</h4>
+        </div>
+        <button class="hamburger" id="hamburgerBtn" onclick="toggleSidebar()">☰</button>
+    </header>
+
+    <!-- Sidebar Menu -->
+    <div class="sidebar" id="sidebar">
+        
+        <button class="sidebar-close" onclick="toggleSidebar()">✕</button>
+        <ul class="sidebar-menu">
+            <li><a href="#" onclick="scrollToWaitlist(); toggleSidebar();"></a></li>
+          <center> <li><a href="#" onclick="toggleSidebar();">Features</a></li></center> 
+           <center><li><a href="#" onclick="toggleSidebar();">Contact us</a></li></center> 
+           <button style="background-color: blue; border: 1px; border-radius: 10px; "><li><a style="color: white;" href="#" onclick="toggleSidebar();">Join the Waitlist</a></li></button>
+        </ul>
+    </div>
+    &nbsp;
+    <section class="">
+        <h2 style="font-size: 25px;">Study smarter. Prepare faster.</h2>
+        <h2 class="highlight" style="color: blue; font-size: 25px;">Ace your exams with SkoolAI.</h2> 
+        <h6>SkoolAI helps you understand exactly what to read by analyzing your past questions, lecture materials, and notes. Instantly discover repeated questions, high-probability topics, patterns, and auto-generated practice questions—all in one place.</h6>
+    </section>
+    &nbsp;
+    <!-- Fixed CTA Section -->
+    <div class="hero-cta">
+        <div class="input-button-container">
+            
+            <button class="cta-button-combined" onclick="handleWaitlistSubmission('heroEmail')">Join the waitlist</button>
+        </div>
+        <div class="status-message" id="heroStatus"></div>
+    </div>
+    <center><button style="border: 1px; border-radius: 10px; background-color: blue; color: white; width: 135px; height: 48px;">Join the waitlist</button></center>
+    &nbsp;
+    <section class="">
+        <center><img style="max-width: 1000px; width: 90%;" src="frame.png"alt="Phone mockup showing SkoolAI interface"></center>
+    </section>
+    &nbsp;
+   <section class="hero2">
+        <h2>Your studies just became easier</h2>
+        <h6>SkoolAI reveals what truly matters by breaking down your documents into clear insights and actionable study guidance</h6>
+    </section>
+    
+
+    <!-- Smart Document Analysis Section -->
+    <section class="document-analysis-section">
+        <div class="analysis-container" id="analysisContainer">
+            <div class="analysis-main" id="analysisMain">
+                <div class="analysis-text" id="analysisText">
+                    <h1>Smart Document<br>Analysis</h1>
+                    <p>Upload any past questions or notes and let<br>SkoolAI extract repeated questions, key topics,<br>and hidden patterns.</p>
+                </div>
+        
+                <!-- Upload Box - Will be hidden on mobile -->
+                <div class="upload-box" id="uploadBox">
+                    <div class="upload-header">Upload documents</div>
+        
+                    <div class="upload-area">
+                        <div class="upload-icon">☁</div>
+                        <div class="upload-text">Upload documents</div>
+                        <button class="select-btn">Select Files</button>
+                    </div>
+        
+                    <div class="file-info">
+                        Allowed formats PDF, Word, jpg & png, less than 10mb
+                    </div>
+        
+                    <button class="analyse-btn">Analyse Documents</button>
+                </div>
+                <!-- ### FIXED-VIEWPORT PDF-STYLE STACKED SCROLL – MOBILE ONLY ### -->
+                <div class="image-scroll-container" id="mobileImage">
+                    <div class="image-stack">
+                        <div class="page-wrapper">
+                            <img src="fg.jpg" alt="analysis preview 1" loading="lazy">
+                        </div>
+                        <div class="page-wrapper">
+                            <img src="Property 1=1.jpg" alt="Property 1=1" loading="lazy">
+                        </div>
+                        <div class="page-wrapper">
+                            <img src="Mobile1.jpg" alt="Mobile 1" loading="lazy">
+                        </div>
+                        <div class="page-wrapper">
+                            <img src="Property 1=2.jpg" alt="Property 1=2" loading="lazy">
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- Get Started Section -->
+    <section class="waitlist-section">
+        <h2>Get early access to SkoolAI</h2>
+        <p style="text-align: center; color: var(--text-light); max-width: 600px; margin: 0 auto 20px; font-size: 16px;">
+            Join the waitlist and be the first to use the AI exam buddy built specifically for students who want to study smarter, not harder.
+        </p>
+        <div class="waitlist-cta">
+            <center><div> <br>
+            <img style="width: 40px; height: 40px;" src="Skool Union.png" alt="Skool Union logo" class="logo">
+        </div></center>
+            <h3 style="color: white; font-size: 20px; margin-bottom: 30px; text-align: center;">Get Started</h3>
+            <div style="display: flex; flex-direction: column;">
+                    <div style="margin-bottom: 20px; text-align: left;">
+                        <label style="display: block; margin-bottom: 10px; font-weight: 600; color: white; font-size: 14px;">Name</label>
+                        <input type="email" class="email-input-combined" id="heroEmail" placeholder="Enter your email address">
+                    </div>
+                <div style="margin-bottom: 20px; text-align: left;">
+                    <label style="display: block; margin-bottom: 10px; font-weight: 600; color: white; font-size: 14px;">Email</label>
+                    <input type="email" class="waitlist-input" id="waitlistEmail" placeholder="Enter your email" style="width: 100%; padding: 14px 16px; border: none; border-radius: 10px; font-size: 14px; box-sizing: border-box;">
+                    <br>br
+                    <center> <button style="border: 1px; border-radius: 10px; background-color: blue; width: 150px; height: 40px; color: white;" class="cta-button-combined" onclick="handleWaitlistSubmission('heroEmail')">Join the waitlist</button></center>
+                </div>
+                <!-- <button class="waitlist-button" onclick="handleWaitlistSubmission('waitlistEmail')" style="width: 100%; padding: 16px; background: #0066ff; color: white; border: none; border-radius: 10px; font-size: 16px; font-weight: 600; cursor: pointer; box-sizing: border-box;">Join the waitlist</button> -->
+            </div>
+            <div class="status-message" id="waitlistStatus"></div>
+        </div>
+    </section>
+
+   <footer>
+        <img style="width: 30px; height: 30px;" src="Skool Union.png" alt="Skool Union logo" class="logo">
+        <h1 style="font-size: large;">About Us</h1>
+        <p style="font-size: small; line-height: 1.6; margin: 10px 0;">SkoolAI is built to help student study smarter and with confidence. By using AI to analyse notes and past exam questions, we highlight key topics, patterns, and books to focus on so students spend less time guessing and more time preparing effectively.</p>
+        <a href="https://x.com" target="_blank" style="color: black; text-decoration: none;"><img style="width: 30px; height: 30px;" src="X twitter.jpg" alt=""></a> &nbsp; &nbsp; &nbsp; &nbsp;
+        <a href="https://www.linkedin.com" target="_blank" style="color: black; text-decoration: none;"><img style="width: 30px; height: 30px;" src="linkedin.jpg" alt=""></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="">Privacy Policy</a>&nbsp;
+        
+        <a href=""> Terms of Use</a>
+
+
+
+    </footer>
+
+    <script>
+        // Initialize EmailJS (You need to sign up at https://www.emailjs.com to get your credentials)
+        // 1. Replace 'YOUR_PUBLIC_KEY' with your actual EmailJS public key
+        // 2. Replace 'YOUR_SERVICE_ID' with your email service ID (e.g., gmail_service)
+        // 3. Replace 'YOUR_TEMPLATE_ID' with your email template ID
+        emailjs.init("4IWjsAVb_ORJ0ZqAx");
+        
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('active');
+        }
+
+        // Close sidebar when clicking outside
+        document.addEventListener('click', function(e) {
+            const sidebar = document.getElementById('sidebar');
+            const hamburger = document.getElementById('hamburgerBtn');
+            if (!sidebar.contains(e.target) && !hamburger.contains(e.target)) {
+                sidebar.classList.remove('active');
+            }
+        });
+        
+        function scrollToWaitlist() {
+            document.querySelector('.waitlist-section').scrollIntoView({ 
+                behavior: 'smooth' 
+            });
+        }
+        
+        function validateEmail(email) {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(email);
+        }
+        
+        function createConfetti() {
+            const colors = ['#1f6feb', '#10b981', '#8b5cf6', '#f59e0b', '#ef4444'];
+            for (let i = 0; i < 100; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.width = Math.random() * 10 + 5 + 'px';
+                confetti.style.height = Math.random() * 10 + 5 + 'px';
+                confetti.style.animation = `confettiRain ${Math.random() * 3 + 2}s linear forwards`;
+                document.body.appendChild(confetti);
+                
+                setTimeout(() => {
+                    confetti.remove();
+                }, 5000);
+            }
+        }
+        
+        async function handleWaitlistSubmission(inputId) {
+            const emailInput = document.getElementById(inputId);
+            const email = emailInput.value.trim();
+            const statusId = inputId === 'heroEmail' ? 'heroStatus' : 'waitlistStatus';
+            const statusElement = document.getElementById(statusId);
+            const button = emailInput.nextElementSibling;
+            
+            // Reset previous states
+            emailInput.classList.remove('error', 'success');
+            statusElement.className = 'status-message';
+            statusElement.textContent = '';
+            
+            // Validate email
+            if (!email) {
+                emailInput.classList.add('error');
+                statusElement.textContent = 'Please enter your email address';
+                statusElement.classList.add('error');
+                return;
+            }
+            
+            if (!validateEmail(email)) {
+                emailInput.classList.add('error');
+                statusElement.textContent = 'Please enter a valid email address';
+                statusElement.classList.add('error');
+                return;
+            }
+            
+            // Show loading state
+            button.classList.add('loading');
+            button.disabled = true;
+            emailInput.disabled = true;
+            
+            try {
+                // Send email using EmailJS
+                const templateParams = {
+                    user_email: email,
+                    to_email: "ademideolaleye15@gmail.com",
+                    subject: "🎉 New SkoolAI Waitlist Signup!",
+                    message: `
+                    🚀 EXCITING NEWS! A NEW USER HAS JOINED THE SKOOLAI WAITLIST! 🚀
+                    
+                    📧 **Email Address:** ${email}
+                    ⏰ **Signup Time:** ${new Date().toLocaleString()}
+                    🌐 **User Agent:** ${navigator.userAgent}
+                    
+                    📊 **WAITLIST SIGNUP DETAILS:**
+                    ------------------------------------
+                    • User Email: ${email}
+                    • Join Date: ${new Date().toDateString()}
+                    • Join Time: ${new Date().toLocaleTimeString()}
+                    • Platform: ${navigator.platform}
+                    • Screen Resolution: ${screen.width}x${screen.height}
+                    
+                    🎯 **USER INTEREST INDICATORS:**
+                    ------------------------------------
+                    This user is proactively seeking to:
+                    1. Study smarter with AI-powered exam prep
+                    2. Analyze past questions effectively
+                    3. Discover repeated exam patterns
+                    4. Get high-probability topic insights
+                    5. Generate practice questions automatically
+                    
+                    💡 **POTENTIAL ENGAGEMENT OPPORTUNITIES:**
+                    ------------------------------------
+                    • Early Access Program
+                    • Beta Testing Invitation
+                    • Product Updates & Launch Announcements
+                    • Exclusive Content Access
+                    • Special Launch Offers
+                    
+                    📈 **NEXT STEPS RECOMMENDED:**
+                    ------------------------------------
+                    1. Add to SkoolAI waitlist database ✅
+                    2. Send welcome/confirmation email
+                    3. Add to early access priority list
+                    4. Track engagement metrics
+                    5. Prepare for onboarding sequence
+                    
+                    🎨 **COOL FEATURES TO HIGHLIGHT:**
+                    ------------------------------------
+                    • Smart Document Analysis
+                    • Past Question Pattern Detection
+                    • AI-Powered Q&A Challenge
+                    • Focus Area Recommendations
+                    • Auto-Generated Practice Tests
+                    
+                    ⚡ **ACTION REQUIRED:**
+                    ------------------------------------
+                    Please add ${email} to the official SkoolAI waitlist and 
+                    prepare for an amazing onboarding experience when we launch!
+                    
+                    Best regards,
+                    SkoolAI Waitlist System 🤖
+                    
+                    PS: This user is excited about revolutionizing their study habits with AI!
+                    `,
+                    reply_to: email
+                };
+                
+                // Send email using EmailJS service
+                // SETUP REQUIRED: 
+                // 1. Create an EmailJS account at https://www.emailjs.com
+                // 2. Set up an email service (e.g., Gmail)
+                // 3. Create a template with variables: {user_email}, {to_email}, {subject}, {message}, {reply_to}
+                // 4. Update YOUR_SERVICE_ID and YOUR_TEMPLATE_ID below with your actual IDs
+                // Emails will be sent to: ademideolaleye15@gmail.com
+                // Send email with a 30s timeout to avoid indefinite spinner
+                const sendPromise = emailjs.send(
+                    'service_i0b929i',
+                    'template_f62yx2a',
+                    templateParams
+                );
+
+                const timeoutMs = 30000; // 30 seconds
+                const timeoutPromise = new Promise((_, reject) =>
+                    setTimeout(() => reject(new Error('Email send timed out')), timeoutMs)
+                );
+
+                await Promise.race([sendPromise, timeoutPromise]);
+
+                // Success
+                emailInput.classList.add('success');
+                statusElement.textContent = '🎉 Welcome aboard! Check your email for confirmation.';
+                statusElement.classList.add('success');
+                emailInput.value = '';
+
+                // Show confetti celebration
+                createConfetti();
+
+                // Track success in console
+                console.log(`🎯 Waitlist signup successful: ${email}`);
+                
+            } catch (error) {
+                console.error('Email send failed:', error);
+
+                // Show error to user and suggest next steps
+                emailInput.classList.add('error');
+                statusElement.textContent = '⛔ Could not send signup. Check console and EmailJS dashboard.';
+                statusElement.classList.add('error');
+
+                // Also log a concise message for your records
+                console.log(`📧 Waitlist Signup FAILED - Email: ${email}, Error: ${error.message}`);
+            } finally {
+                // Reset loading state
+                button.classList.remove('loading');
+                button.disabled = false;
+                emailInput.disabled = false;
+            }
+        }
+        
+        // Add enter key support
+        document.addEventListener('DOMContentLoaded', function() {
+            const emailInputs = document.querySelectorAll('.email-input-combined, .waitlist-input');
+            emailInputs.forEach(input => {
+                input.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        const inputId = this.id;
+                        handleWaitlistSubmission(inputId);
+                    }
+                });
+            });
+            
+            // Handle mobile layout
+            const analysisText = document.getElementById('analysisText');
+            const uploadBox = document.getElementById('uploadBox');
+            const mobileImage = document.getElementById('mobileImage');
+            const analysisContainer = document.getElementById('analysisContainer');
+            const analysisMain = document.getElementById('analysisMain');
+            
+            function isMobileDevice() {
+                return window.innerWidth <= 768;
+            }
+            
+            function updateLayout() {
+                if (isMobileDevice()) {
+                    analysisText.style.display = 'none';
+                    analysisText.classList.add('mobile-hidden');
+                    uploadBox.style.display = 'none';
+                    uploadBox.classList.add('mobile-hidden');
+                    mobileImage.style.display = 'block';
+                    mobileImage.classList.add('mobile-visible');
+                    analysisContainer.classList.add('mobile-layout');
+                    analysisMain.classList.add('mobile-layout');
+                    analysisContainer.style.padding = '0';
+                    analysisContainer.style.background = 'transparent';
+                    analysisContainer.style.boxShadow = 'none';
+                } else {
+                    analysisText.style.display = 'block';
+                    analysisText.classList.remove('mobile-hidden');
+                    uploadBox.style.display = 'block';
+                    uploadBox.classList.remove('mobile-hidden');
+                    mobileImage.style.display = 'none';
+                    mobileImage.classList.remove('mobile-visible');
+                    analysisContainer.classList.remove('mobile-layout');
+                    analysisMain.classList.remove('mobile-layout');
+                    analysisContainer.style.padding = '';
+                    analysisContainer.style.background = '';
+                    analysisContainer.style.boxShadow = '';
+                }
+            }
+             
+            updateLayout();
+            window.addEventListener('resize', updateLayout);
+            window.addEventListener('orientationchange', function() {
+                setTimeout(updateLayout, 100);
+            });
+        });
+    </script>
+
+    <script>
+const canvas = document.getElementById("cloudCanvas");
+const ctx = canvas.getContext("2d");
+
+function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = 120;
+}
+resizeCanvas();
+window.addEventListener("resize", resizeCanvas);
+
+// Cloud class
+class Cloud {
+    constructor() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * 60 + 20;
+        this.size = Math.random() * 40 + 50;
+        this.speed = Math.random() * 0.15 + 0.05;
+        this.opacity = Math.random() * 0.25 + 0.15;
+        this.offsetY = Math.random() * 20;
+        this.time = Math.random() * 100;
+    }
+
+    draw() {
+        ctx.beginPath();
+        ctx.fillStyle = `rgba(255,255,255,${this.opacity})`;
+        ctx.shadowColor = 'rgba(255,255,255,0.3)';
+        ctx.shadowBlur = 15;
+
+        // Soft, puffy cloud shape with rounded edges
+        ctx.arc(this.x, this.y, this.size * 0.5, 0, Math.PI * 2);
+        ctx.arc(this.x + this.size * 0.35, this.y + 8, this.size * 0.38, 0, Math.PI * 2);
+        ctx.arc(this.x - this.size * 0.35, this.y + 8, this.size * 0.38, 0, Math.PI * 2);
+        ctx.arc(this.x + this.size * 0.6, this.y + 12, this.size * 0.3, 0, Math.PI * 2);
+        ctx.arc(this.x - this.size * 0.6, this.y + 12, this.size * 0.3, 0, Math.PI * 2);
+
+        ctx.fill();
+        ctx.shadowBlur = 0;
+    }
+
+    update() {
+        this.x += this.speed;
+        this.time += 0.01;
+        
+        // Gentle floating motion
+        const bobY = Math.sin(this.time) * 3;
+        
+        if (this.x - this.size > canvas.width) {
+            this.x = -this.size * 2;
+            this.y = Math.random() * 60 + 20;
+            this.offsetY = Math.random() * 20;
+            this.time = 0;
+        }
+        this.draw();
+    }
+}
+
+// Create clouds
+const clouds = [];
+for (let i = 0; i < 6; i++) {
+    clouds.push(new Cloud());
+}
+
+// Animation loop
+function animate() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    clouds.forEach(cloud => cloud.update());
+    requestAnimationFrame(animate);
+}
+
+animate();
+</script>
+
+<script>
+    (function(){
+        const loader = document.getElementById('global-loader');
+        if(!loader) return;
+
+        function setVisible(show){
+            if(show){
+                loader.classList.remove('hidden');
+                loader.setAttribute('aria-hidden','false');
+            } else {
+                loader.classList.add('hidden');
+                loader.setAttribute('aria-hidden','true');
+            }
+        }
+
+        function checkLoading(){
+            const has = document.querySelector('.loading') !== null;
+            setVisible(has);
+        }
+
+        const observer = new MutationObserver(function(mutations){
+            for(const m of mutations){
+                if(m.type === 'attributes' && m.attributeName === 'class') { checkLoading(); break; }
+                if(m.type === 'childList') { checkLoading(); break; }
+            }
+        });
+
+        observer.observe(document.body, { attributes: true, subtree: true, childList: true, attributeFilter: ['class'] });
+
+        document.addEventListener('DOMContentLoaded', checkLoading);
+        // Ensure loader hides after full window load (short fade)
+        window.addEventListener('load', function(){
+            setTimeout(function(){ setVisible(false); }, 300);
+        });
+
+        window.__SkoolAILoader = { show: () => setVisible(true), hide: () => setVisible(false) };
+    })();
+</script>
+
+<script>
+    (function() {
+    const scrollContainer = document.getElementById('mobileImage');
+    if (!scrollContainer || !scrollContainer.classList.contains('image-scroll-container')) return;
+
+    const imageStack = scrollContainer.querySelector('.image-stack');
+    const images = scrollContainer.querySelectorAll('.image-stack img');
+
+    // Optional: track current index if you want to do something with it later
+    let currentIndex = 0;
+
+    function updateCurrentIndex() {
+        const containerTop = scrollContainer.getBoundingClientRect().top;
+        let closestIndex = 0;
+        let minDistance = Infinity;
+
+        images.forEach((img, i) => {
+            const imgTop = img.getBoundingClientRect().top;
+            const distance = Math.abs(imgTop - containerTop);
+            if (distance < minDistance) {
+                minDistance = distance;
+                closestIndex = i;
+            }
+        });
+
+        currentIndex = closestIndex;
+    }
+
+    // Touch swipe support
+    let touchStartY = 0;
+
+    scrollContainer.addEventListener('touchstart', e => {
+        touchStartY = e.touches[0].clientY;
+    }, { passive: true });
+
+    scrollContainer.addEventListener('touchend', e => {
+        const touchEndY = e.changedTouches[0].clientY;
+        const delta = touchStartY - touchEndY;
+
+        // Only act on significant swipes (adjust 50 if too sensitive)
+        if (Math.abs(delta) > 50) {
+            if (delta > 0) { // swipe up → try go next
+                if (currentIndex < images.length - 1) {
+                    images[currentIndex + 1].scrollIntoView({ behavior: 'smooth' });
+                }
+            } else { // swipe down → try go previous
+                if (currentIndex > 0) {
+                    images[currentIndex - 1].scrollIntoView({ behavior: 'smooth' });
+                }
+            }
+        }
+    });
+
+    // Optional: keep track of which image is currently in view
+    scrollContainer.addEventListener('scroll', updateCurrentIndex, { passive: true });
+
+    // Initial setup
+    updateCurrentIndex();
+
+    // Wheel support (most browsers already work well with scroll-snap, but can enhance)
+    scrollContainer.addEventListener('wheel', e => {
+        // Optional: you can leave this empty now — scroll-snap usually handles it
+        // But if you want stricter control, you can keep a debounced version
+    }, { passive: false });
+})();
+</script>
+
+<script>
+// Update page counter when scrolling
+const scrollContainer = document.getElementById('mobileImage');
+const pageCounter     = document.getElementById('pageCounter');
+
+if (scrollContainer && pageCounter) {
+    const pages = scrollContainer.querySelectorAll('.page-wrapper');
+    const total = pages.length;
+
+    function updatePageCount() {
+        let closest = 1;
+        let minDist = Infinity;
+
+        pages.forEach((page, index) => {
+            const rect = page.getBoundingClientRect();
+            const dist = Math.abs(rect.top);
+            if (dist < minDist) {
+                minDist = dist;
+                closest = index + 1;
+            }
+        });
+
+        pageCounter.textContent = `${closest} / ${total}`;
+    }
+
+    scrollContainer.addEventListener('scroll', updatePageCount, { passive: true });
+    // Initial call
+    setTimeout(updatePageCount, 300);
+}
+</script>
+</body>
+</html>
